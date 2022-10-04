@@ -55,25 +55,25 @@ def print_champion_info(champion_name):
     blurb = get_champion_blurb(champion_name)
     info = get_champion_info(champion_name)
     tags = get_champion_tags(champion_name)
-    print(champion_name + ', ' + title)
-    print(blurb)
+    print('Name: ' + champion_name)
+    print('Title: ' + title)
+    print('Blurb: ' + blurb)
     for i in info:
         print(i.capitalize() + ': ' + str(info[i]))
-    for tag in tags:
-        print(tag, end='')
-        print(', ', end='')
+    print('Tags: ' +  ', '.join(tags))
 
 import urllib.request
 
 def get_champion_image(champion_name):
     url = 'https://ddragon.leagueoflegends.com/cdn/12.18.1/img/champion/' + champion_name + '.png'
-    directory = champion_name + '.png'
+    directory = 'temp.png'
     urllib.request.urlretrieve(url, directory)
 
 
 from colors import color
 from PIL import Image
 import numpy as np
+import os
 
 def get_image_pixel(col):
     return color('  ', bg=f'rgb({int(col[0])}, {int(col[1])}, {int(col[2])})')
@@ -95,7 +95,10 @@ def render_image(pixels, scale = 20):
     
     return output
 
-def print_image(champion_name):
-    image = np.asarray(Image.open(champion_name + '.png'))
+def print_image():
+    image = np.asarray(Image.open('temp.png'))
     output = render_image(image, (20, 20))
     print('\n'.join([''.join(row) for row in output]))
+    
+def remove_image():
+    os.remove('temp.png')
