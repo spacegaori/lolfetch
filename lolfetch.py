@@ -8,10 +8,11 @@ if(not hf.validate_arguments(champion_name, champion_names)):
     quit()
 
 hf.get_champion_image(champion_name)
-hf.print_image()
-hf.print_champion_info(champion_name)
+# hf.print_image()
+# hf.print_champion_info(champion_name)
+hf.print_combined(champion_name)
 hf.remove_image()
 
-# TODO image and info side by side
-# TODO better image algorithm
+# TODO better image source
 # TODO ideas to display champion infos and tags (emojis)
+# TODO add functionality for random argument (-r)

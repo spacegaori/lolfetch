@@ -54,13 +54,17 @@ def print_champion_info(champion_name):
     title = get_champion_title(champion_name)
     blurb = get_champion_blurb(champion_name)
     info = get_champion_info(champion_name)
+    attack = info['attack']
+    defense = info['defense']
+    magic = info['magic']
+    difficulty = info['difficulty']
     tags = get_champion_tags(champion_name)
-    print('Name: ' + champion_name)
-    print('Title: ' + title)
-    print('Blurb: ' + blurb)
-    for i in info:
-        print(i.capitalize() + ': ' + str(info[i]))
-    print('Tags: ' +  ', '.join(tags))
+    print(champion_name + ', ' + title)
+    print(blurb)
+    print('ATK: ', attack)
+    print('DEF: ', defense)
+    print('INT: ', magic)
+    print('DIF: ', difficulty)
 
 import urllib.request
 
@@ -98,7 +102,42 @@ def render_image(pixels, scale = 20):
 def print_image():
     image = np.asarray(Image.open('temp.png'))
     output = render_image(image, (20, 20))
-    print('\n'.join([''.join(row) for row in output]))
+    rows = ('\n'.join([''.join(row) for row in output]))
+    print(rows)
+
+def print_combined(champion_name):
+    image = np.asarray(Image.open('temp.png'))
+    output = render_image(image, (20, 20))
+    rows = [''.join(row) for row in output]
+    
+    title = get_champion_title(champion_name)
+    blurb = get_champion_blurb(champion_name)
+    info = get_champion_info(champion_name)
+    attack = info['attack']
+    defense = info['defense']
+    magic = info['magic']
+    difficulty = info['difficulty']
+    tags = get_champion_tags(champion_name)
+    
+    i = 0
+    for i in range(20):
+        if i == 8:
+            print(rows[i], end = '\t')
+            print(champion_name + ', ' + title, end = '\n')
+        elif i == 9:
+            print(rows[i], end = '\t  ')
+            print('ATK: ', attack, end = '\n')
+        elif i == 10:
+            print(rows[i], end = '\t  ')
+            print('DEF: ', defense, end = '\n')
+        elif i == 11:
+            print(rows[i], end = '\t  ')
+            print('INT: ', magic, end = '\n')
+        elif i == 12:
+            print(rows[i], end = '\t  ')
+            print('DIF: ', difficulty, end = '\n')
+        else:
+            print(rows[i])
     
 def remove_image():
     os.remove('temp.png')
