@@ -68,15 +68,22 @@ def print_champion_info(champion_name):
 
 import urllib.request
 
-def get_champion_image(champion_name):
+def get_champion_icon(champion_name):
     url = 'https://ddragon.leagueoflegends.com/cdn/12.18.1/img/champion/' + champion_name + '.png'
-    directory = 'temp.png'
+    directory = 'icon.png'
+    urllib.request.urlretrieve(url, directory)
+
+def get_champion_splash(champion_name):
+    url = 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/' + champion_name + '_0.jpg'
+    directory = 'splash.jpg'
     urllib.request.urlretrieve(url, directory)
 
 
 from colors import color
 from PIL import Image
 import numpy as np
+from colorthief import ColorThief
+from sty import fg, bg, ef, rs, Style, RgbFg
 import os
 
 def get_image_pixel(col):
@@ -99,14 +106,29 @@ def render_image(pixels, scale = 20):
     
     return output
 
+def get_dominant_color(champion_name):
+    get_champion_splash(champion_name)
+    color_thief = ColorThief('splash.jpg')
+    (r, g, b) = color_thief.get_color(quality=1)
+    os.remove('splash.jpg')
+    
+    return (r, g, b)
+
+def colored_text(r, g, b):
+    fg.dominant_color = Style(RgbFg(r, g, b))
+    return fg.dominant_color
+
+def reset_text():
+    return fg.rs
+
 def print_image():
-    image = np.asarray(Image.open('temp.png'))
+    image = np.asarray(Image.open('icon.png'))
     output = render_image(image, (20, 20))
     rows = ('\n'.join([''.join(row) for row in output]))
     print(rows)
 
-def print_combined(champion_name):
-    image = np.asarray(Image.open('temp.png'))
+def print_combined(champion_name, r, g, b):
+    image = np.asarray(Image.open('icon.png'))
     output = render_image(image, (20, 20))
     rows = [''.join(row) for row in output]
     
@@ -121,23 +143,28 @@ def print_combined(champion_name):
     
     i = 0
     for i in range(20):
-        if i == 8:
+        if i == 7:
             print(rows[i], end = '\t')
-            print(champion_name + ', ' + title, end = '\n')
+            print(colored_text(r, g, b) + champion_name + ', ' + title + reset_text(), end = '\n')
+        elif i == 8:
+            print(rows[i], end = '\t')
+            for i in range(len(champion_name)+len(title) + 2):
+                print('-', end='')
         elif i == 9:
-            print(rows[i], end = '\t  ')
-            print('ATK: ', attack, end = '\n')
+            print('\n' + rows[i], end = '\t')
+            print(colored_text(r, g, b) + '  ATK: ' + reset_text(), attack, end = '\n')
         elif i == 10:
-            print(rows[i], end = '\t  ')
-            print('DEF: ', defense, end = '\n')
+            print(rows[i], end = '\t')
+            print(colored_text(r, g, b) + '  DEF: ' + reset_text(), defense, end = '\n')
         elif i == 11:
-            print(rows[i], end = '\t  ')
-            print('INT: ', magic, end = '\n')
+            print(rows[i], end = '\t')
+            print(colored_text(r, g, b) + '  INT: ' + reset_text(), magic, end = '\n')
         elif i == 12:
-            print(rows[i], end = '\t  ')
-            print('DIF: ', difficulty, end = '\n')
+            print(rows[i], end = '\t')
+            print(colored_text(r, g, b) + '  DIF: ' + reset_text(), difficulty, end = '\n')
         else:
             print(rows[i])
+    print(blurb)
     
 def remove_image():
-    os.remove('temp.png')
+    os.remove('icon.png')
